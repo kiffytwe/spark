@@ -42,14 +42,12 @@
             opacity: 0.4;
         }
 
-        /* Ambient Emojis - Adjusted for Grayscale */
         .ambient-emoji {
             position: fixed;
             pointer-events: none;
             z-index: 500;
             user-select: none;
             animation: floatUpAndFade 4s ease-in-out forwards;
-            filter: grayscale(1) contrast(1.2); /* Makes emojis fit the Noir theme */
         }
 
         @keyframes floatUpAndFade {
@@ -58,7 +56,6 @@
             100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
         }
 
-        /* Header Styling */
         header {
             padding: 2.5rem 5%;
             position: fixed;
@@ -135,7 +132,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* The App Container & Cards */
         #app {
             display: flex;
             justify-content: center;
@@ -148,7 +144,7 @@
             backdrop-filter: blur(25px);
             border: 1px solid var(--border-light);
             padding: 3.5rem;
-            border-radius: 0px; /* Sharp corners for a more brutalist/modern look */
+            border-radius: 0px;
             width: 100%;
             max-width: 460px;
             display: none;
@@ -156,7 +152,6 @@
             position: relative;
         }
 
-        /* Accent corner lines for the card */
         .card::before {
             content: '';
             position: absolute;
@@ -189,7 +184,6 @@
             padding-left: 15px;
         }
 
-        /* Form Controls */
         .input-group {
             position: relative;
             margin-bottom: 2rem;
@@ -387,7 +381,6 @@
         }
         setInterval(spawnEmoji, 2000);
 
-        // --- NOIR PARTICLES ---
         const canvas = document.getElementById('spark-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
