@@ -5,389 +5,277 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Spark Archives - Share Freely, Anonymously</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         :root {
-            --bg-primary: #eef4f9;
-            --bg-card: rgba(255, 255, 255, 0.7);
-            --bg-input: #f8faff;
-            --color-primary: #1c2b3a;
-            --color-secondary: #0077b6;
-            --color-accent: #00b4d8;
-            --text-light: #6e7a8c;
-            --card-radius: 20px;
-            --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.08);
-            --shadow-strong: 0 15px 60px rgba(0, 0, 0, 0.15);
-            --transition-fast: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --bg-dark: #0a0a0a;
+            --bg-medium: #1a1a1a;
+            --text-main: #ffffff;
+            --text-dim: #a0a0a0;
+            --accent-white: #ffffff;
+            --border-light: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.03);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            transition: color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            background: var(--bg-primary);
-            color: var(--color-primary);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #0a0a0a 100%);
+            color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
         }
 
         #spark-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             z-index: -1;
-            opacity: 0.8;
+            pointer-events: none;
+            opacity: 0.4;
         }
 
+        /* Ambient Emojis - Adjusted for Grayscale */
+        .ambient-emoji {
+            position: fixed;
+            pointer-events: none;
+            z-index: 500;
+            user-select: none;
+            animation: floatUpAndFade 4s ease-in-out forwards;
+            filter: grayscale(1) contrast(1.2); /* Makes emojis fit the Noir theme */
+        }
+
+        @keyframes floatUpAndFade {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            20% { opacity: 0.6; transform: translateY(-20px) scale(1); }
+            100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
+        }
+
+        /* Header Styling */
         header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 1.5rem 2rem;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(15px);
-            box-shadow: var(--shadow-soft);
-            transition: padding var(--transition-fast), box-shadow var(--transition-fast);
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
+            padding: 2.5rem 5%;
+            position: fixed;
             width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         header.scrolled {
-            padding: 1rem 2rem;
-            box-shadow: var(--shadow-strong);
+            padding: 1rem 5%;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border-light);
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 15px;
         }
 
-        .header-text-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            line-height: 1.2;
+        .logo-container img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--accent-white);
+            filter: grayscale(1);
+            transition: all 0.5s ease;
         }
 
-        header img {
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border: 2px solid var(--color-accent);
+        .logo-container:hover img {
+            filter: grayscale(0);
+            transform: rotate(360deg);
         }
 
-        @keyframes rotate-360 {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        header img.rotate-on-hover:hover {
-            animation: rotate-360 2s linear infinite;
-        }
-
-        header h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.6rem;
+        .header-text-container h1 {
+            font-size: 1.4rem;
             font-weight: 700;
-            background: linear-gradient(45deg, var(--color-secondary), var(--color-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0; 
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-main);
         }
 
         .watermark {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            letter-spacing: 0.5px;
-            margin-top: 0.25rem;
-        }
-
-        #welcome {
-            text-align: center;
-            padding: 5rem 1.5rem 3rem;
-            animation: fadeIn 1.5s ease-out;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        #welcome h3 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 2.5rem;
-            color: var(--color-primary);
-            margin-bottom: 0.75rem;
-        }
-
-        #welcome p {
-            font-size: 1.1rem;
-            color: var(--text-light);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.8;
+            font-size: 0.6rem;
+            color: var(--text-dim);
             font-weight: 400;
+            letter-spacing: 4px;
+            text-transform: uppercase;
         }
 
+        /* Welcome Section */
+        #welcome {
+            margin-top: 180px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .welcome-content h3 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+        }
+
+        #typewriter-paragraph {
+            max-width: 500px;
+            margin: 0 auto;
+            color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+        }
+
+        /* The App Container & Cards */
         #app {
-            flex: 1;
             display: flex;
             justify-content: center;
-            padding: 1.5rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        form {
-            width: 100%;
-            max-width: 650px;
-            position: relative;
+            padding: 60px 20px;
+            min-height: 550px;
         }
 
         .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border-light);
+            padding: 3.5rem;
+            border-radius: 0px; /* Sharp corners for a more brutalist/modern look */
+            width: 100%;
+            max-width: 460px;
             display: none;
-            backdrop-filter: blur(15px);
-            background: var(--bg-card);
-            padding: 3rem;
-            border-radius: var(--card-radius);
-            box-shadow: var(--shadow-strong);
-            animation: cardSlide 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            transform: translateY(20px);
-            opacity: 0;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        /* Accent corner lines for the card */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 30px;
+            height: 30px;
+            border-top: 2px solid white;
+            border-left: 2px solid white;
         }
 
         .card.active {
             display: block;
-            transform: translateY(0);
-            opacity: 1;
+            animation: cardFade 0.5s ease-out;
+        }
+
+        @keyframes cardFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card h3 {
-            font-family: 'Poppins', sans-serif;
-            margin-bottom: 2rem;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            text-align: center;
-            position: relative;
-            letter-spacing: -0.5px;
-        }
-
-        .card h3::after {
-            content: "";
-            width: 80px;
-            height: 5px;
-            background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
-            display: block;
-            margin: 0.75rem auto 0;
-            border-radius: 3px;
-        }
-
-        #progress-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 2.5rem;
-            padding: 0 1rem;
-            position: relative;
-        }
-
-        #progress-container::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #d4e0eb;
-            z-index: 1;
-            transform: translateY(-50%);
-        }
-
-        .progress-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        .progress-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #eef4f9;
-            border: 2px solid #a8c0d8;
-            color: var(--text-light);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.1rem;
+            text-align: left;
             font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 2;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-left: 3px solid white;
+            padding-left: 15px;
         }
 
-        .progress-step.active .progress-circle {
-            background: linear-gradient(45deg, var(--color-secondary), var(--color-accent));
-            border-color: #ffffff;
-            color: #fff;
-            transform: scale(1.2);
-            box-shadow: 0 0 15px rgba(0, 119, 182, 0.7), 0 0 30px rgba(0, 180, 216, 0.5);
-        }
-
-        .progress-step.active:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 50%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
-            z-index: 1;
-            transform: translateY(-50%);
-            transition: width 0.5s ease-in-out;
-        }
-        .progress-step:last-child::before {
-            display: none;
-        }
-
+        /* Form Controls */
         .input-group {
             position: relative;
             margin-bottom: 2rem;
         }
 
-        label.floating-label {
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1rem;
-            color: var(--text-light);
-            pointer-events: none;
-            transition: all var(--transition-fast);
-            z-index: 1;
-        }
-
-        input:focus + label,
-        textarea:focus + label,
-        input:not(:placeholder-shown) + label,
-        textarea:not(:placeholder-shown) + label {
-            top: 0;
-            left: 1.25rem;
-            font-size: 0.85rem;
-            color: var(--color-accent);
-            background: var(--bg-card);
-            padding: 0 0.5rem;
-            transform: translateY(-50%);
-        }
-
-        input, select, textarea {
+        input, textarea, select {
             width: 100%;
-            padding: 1.25rem 1.5rem;
-            border: 2px solid #a8c0d8;
-            border-radius: 16px;
-            font-size: 1rem;
-            transition: border var(--transition-fast), box-shadow var(--transition-fast);
-            background: var(--bg-input);
-            color: var(--color-primary);
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: 0;
+            color: #fff;
+            font-size: 0.9rem;
             outline: none;
+            transition: 0.3s ease;
         }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 5px rgba(0, 180, 216, 0.15);
-            background: #ffffff;
+        input:focus, textarea:focus, select:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
-        textarea {
-            resize: vertical;
+        .floating-label {
+            position: absolute;
+            left: 18px;
+            top: 18px;
+            color: var(--text-dim);
+            transition: 0.3s ease;
+            pointer-events: none;
+            font-size: 0.9rem;
+        }
+
+        input:focus ~ .floating-label,
+        input:not(:placeholder-shown) ~ .floating-label,
+        textarea:focus ~ .floating-label,
+        textarea:not(:placeholder-shown) ~ .floating-label {
+            top: -12px;
+            left: 0px;
+            font-size: 0.7rem;
+            color: #fff;
+            letter-spacing: 1px;
+            background: var(--bg-dark);
+            padding: 0 10px;
         }
 
         button {
             width: 100%;
-            padding: 1.25rem;
-            border: none;
-            border-radius: 16px;
-            background: linear-gradient(45deg, var(--color-secondary), var(--color-accent));
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 18px;
+            border: 1px solid white;
+            background: white;
+            color: black;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 300%;
-            height: 300%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.4s ease;
-            z-index: -1;
-        }
-
-        button:hover::before {
-            opacity: 1;
-            transform: scale(1);
         }
 
         button:hover {
-            box-shadow: 0 10px 40px rgba(0, 180, 216, 0.4);
-            transform: translateY(-2px);
+            background: transparent;
+            color: white;
         }
 
-        button:active {
-            transform: translateY(0);
-            box-shadow: none;
+        /* SweetAlert Styling - Noir */
+        .swal2-popup {
+            background: #111 !important;
+            color: #fff !important;
+            border: 1px solid #333 !important;
+            border-radius: 0 !important;
         }
-
-        /* Removed the old .watermark style */
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes cardSlide { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            #welcome { padding-top: 3rem; }
-            #welcome h3 { font-size: 2rem; }
-            #welcome p { font-size: 1rem; }
-            .card { padding: 2rem; }
-            button { font-size: 1rem; }
+        .swal2-confirm {
+            background: #fff !important;
+            color: #000 !important;
+            border-radius: 0 !important;
+            font-weight: bold !important;
         }
     </style>
 </head>
 <body>
+
     <canvas id="spark-canvas"></canvas>
 
     <header>
         <div class="logo-container">
-            <img src="https://i.ibb.co/YFgznXZM/received-964135092547666.jpg" alt="Logo" class="rotate-on-hover"/>
+            <img src="https://i.ibb.co/YFgznXZM/received-964135092547666.jpg" alt="Logo"/>
             <div class="header-text-container">
                 <h1>Spark Archives</h1>
                 <div class="watermark">Created By: Kiff Hyacinth Pon</div>
@@ -397,42 +285,18 @@
 
     <section id="welcome">
         <div class="welcome-content">
-            <h3>Welcome to Spark Archives</h3>
+            <h3>ANONYMOUS ARCHIVE</h3>
             <p id="typewriter-paragraph"></p>
         </div>
     </section>
 
     <div id="app">
         <form id="submissionForm">
-            <div id="progress-container">
-                <div class="progress-step active" data-step="1">
-                    <span class="progress-circle"><i class="fas fa-edit"></i></span>
-                </div>
-                <div class="progress-step" data-step="2">
-                    <span class="progress-circle"><i class="fas fa-heading"></i></span>
-                </div>
-                <div class="progress-step" data-step="3">
-                    <span class="progress-circle"><i class="fas fa-file-alt"></i></span>
-                </div>
-                <div class="progress-step" data-step="4">
-                    <span class="progress-circle"><i class="fas fa-envelope-open-text"></i></span>
-                </div>
-                <div class="progress-step" data-step="5">
-                    <span class="progress-circle"><i class="fas fa-user-secret"></i></span>
-                </div>
-                <div class="progress-step" data-step="6">
-                    <span class="progress-circle"><i class="fas fa-user-friends"></i></span>
-                </div>
-                <div class="progress-step" data-step="7">
-                    <span class="progress-circle"><i class="fas fa-check-circle"></i></span>
-                </div>
-            </div>
-
             <div class="card step step-1 active">
-                <h3>Share Your Spark</h3>
+                <h3>01. Category</h3>
                 <div class="input-group">
                     <select id="category" required>
-                        <option value="" disabled selected>Select a Category</option>
+                        <option value="" disabled selected>Select Classification</option>
                         <option value="CONFESSION">Confession</option>
                         <option value="ENCOURAGEMENT">Encouragement</option>
                         <option value="QUERY">Query</option>
@@ -442,62 +306,64 @@
                         <option value="OTHERS">Others</option>
                     </select>
                 </div>
-                <button type="button" onclick="nextStep()">Next</button>
+                <button type="button" onclick="nextStep()">Proceed</button>
             </div>
 
             <div class="card step step-2">
-                <h3>Share Your Spark</h3>
+                <h3>02. Subject</h3>
                 <div class="input-group">
                     <input type="text" id="message_title" placeholder=" " required>
-                    <label for="message_title" class="floating-label">Message Title</label>
+                    <label for="message_title" class="floating-label">Entry Title</label>
                 </div>
-                <button type="button" onclick="nextStep()">Next</button>
+                <button type="button" onclick="nextStep()">Proceed</button>
             </div>
 
             <div class="card step step-3">
-                <h3>Share Your Spark</h3>
+                <h3>03. Message</h3>
                 <div class="input-group">
                     <textarea id="message" rows="6" placeholder=" " required></textarea>
-                    <label for="message" class="floating-label">Message</label>
+                    <label for="message" class="floating-label">Write your thoughts...</label>
                 </div>
-                <button type="button" onclick="nextStep()">Next</button>
+                <button type="button" onclick="nextStep()">Proceed</button>
             </div>
 
             <div class="card step step-4">
-                <h3>Share Your Spark</h3>
+                <h3>04. Admin Note</h3>
                 <div class="input-group">
-                    <textarea id="message_to_admin" rows="4" placeholder=""></textarea>
-                    <label for="message_to_admin" class="floating-label">Message to Admin (Optional)</label>
+                    <textarea id="message_to_admin" rows="4" placeholder=" "></textarea>
+                    <label for="message_to_admin" class="floating-label">Private note to admin</label>
                 </div>
-                <button type="button" onclick="nextStep()">Next</button>
+                <button type="button" onclick="nextStep()">Proceed</button>
             </div>
 
             <div class="card step step-5">
-                <h3>Share Your Spark</h3>
+                <h3>05. Identity</h3>
                 <div class="input-group">
                     <input type="text" id="codename" placeholder=" " required>
-                    <label for="codename" class="floating-label">Codename</label>
+                    <label for="codename" class="floating-label">Digital Alias</label>
                 </div>
-                <button type="button" onclick="nextStep()">Next</button>
+                <button type="button" onclick="nextStep()">Proceed</button>
             </div>
 
             <div class="card step step-6">
-                <h3>Share Your Spark</h3>
+                <h3>06. Affiliation</h3>
                 <div class="input-group">
                     <select id="option" required>
-                        <option value="" disabled selected>Select a Type</option>
+                        <option value="" disabled selected>Select Origin</option>
                         <option value="MONTESSORIAN">Montessorian</option>
                         <option value="NON-MONTESSORIAN">Non-Montessorian</option>
                         <option value="ALUMNI-STUDENT">Alumni Student</option>
                     </select>
                 </div>
-                <button type="button" onclick="nextStep()">Next</button>
+                <button type="button" onclick="nextStep()">Review</button>
             </div>
 
             <div class="card step step-7">
-                <h3>Submission</h3>
-                <p style="text-align: center; color: var(--text-light);">You're almost there! Once submitted, changes cannot be made.</p><br>
-                <button type="submit">Submit</button>
+                <h3>Finalize</h3>
+                <p style="text-align: left; color: var(--text-dim); margin-bottom: 30px; font-size: 0.85rem; line-height: 1.6;">
+                    You are about to archive this spark. Once encoded, the data is immutable and will be stored anonymously.
+                </p>
+                <button type="submit">Publish to Archive</button>
             </div>
         </form>
     </div>
@@ -507,12 +373,25 @@
     </audio>
 
     <script>
+        // --- AMBIENT EMOJI ENGINE ---
+        const emojis = ['🌑', '✨', '✒️', '💭', '🕊️', '🗝️', '🌪️', '🖤'];
+        function spawnEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'ambient-emoji';
+            emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            const x = Math.random() * (window.innerWidth - 50) + 25;
+            const y = (window.innerHeight * 0.8);
+            emoji.style.left = `${x}px`;
+            emoji.style.top = `${y}px`;
+            document.body.appendChild(emoji);
+            setTimeout(() => emoji.remove(), 4000);
+        }
+        setInterval(spawnEmoji, 2000);
+
+        // --- NOIR PARTICLES ---
         const canvas = document.getElementById('spark-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
-        const particles = [];
-        const particleCount = 100;
-        let mouse = { x: null, y: null, radius: 150 };
+        let width, height, particles = [];
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -520,120 +399,41 @@
         }
 
         class Particle {
-            constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
+            constructor() { this.init(); }
+            init() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.v = Math.random() * 0.2 + 0.1;
+                this.size = Math.random() * 1.5;
             }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-
             update() {
-                if (this.x > width + this.size || this.x < -this.size) this.directionX *= -1;
-                if (this.y > height + this.size || this.y < -this.size) this.directionY *= -1;
-
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx*dx + dy*dy);
-
-                if (distance < mouse.radius) {
-                    let forceDirectionX = dx / distance;
-                    let forceDirectionY = dy / distance;
-                    let pushFactor = (mouse.radius - distance) / mouse.radius;
-                    this.x -= forceDirectionX * pushFactor * 1.5;
-                    this.y -= forceDirectionY * pushFactor * 1.5;
-                }
-
-                this.x += this.directionX;
-                this.y += this.directionY;
-                this.draw();
+                this.y -= this.v;
+                if (this.y < 0) this.y = height;
+            }
+            draw() {
+                ctx.fillStyle = "rgba(255,255,255,0.5)";
+                ctx.fillRect(this.x, this.y, this.size, this.size);
             }
         }
 
-        function init() {
-            particles.length = 0;
-            for (let i = 0; i < particleCount; i++) {
-                let size = Math.random() * 2 + 1;
-                let x = Math.random() * width;
-                let y = Math.random() * height;
-                let directionX = (Math.random() - 0.5) * 0.5;
-                let directionY = (Math.random() - 0.5) * 0.5;
-                let color = `rgba(0, 119, 182, ${Math.random() * 0.8 + 0.2})`;
-                particles.push(new Particle(x, y, directionX, directionY, size, color));
-            }
-        }
+        for(let i=0; i<60; i++) particles.push(new Particle());
 
         function animate() {
+            ctx.clearRect(0,0,width,height);
+            particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
-            ctx.clearRect(0, 0, width, height);
-
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
-                    let dx = particles[a].x - particles[b].x;
-                    let dy = particles[a].y - particles[b].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 100) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(108, 117, 125, ${1 - distance/100})`;
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            particles.forEach(p => p.update());
         }
 
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            init();
-        });
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-        window.addEventListener('mouseout', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
-
+        // --- LOGIC (KEEPING FUNCTIONALITY) ---
         let currentStep = 1;
         const form = document.getElementById('submissionForm');
-        const progressSteps = document.querySelectorAll('.progress-step');
-        const header = document.querySelector('header');
         const bgMusic = document.getElementById('bgMusic');
         let musicStarted = false;
 
         function playMusic() {
             if (!musicStarted) {
-                bgMusic.play().then(() => {
-                    musicStarted = true;
-                    document.removeEventListener('click', playMusic);
-                }).catch(error => {
-                    console.error("Autoplay was prevented:", error);
-                });
+                bgMusic.play().then(() => musicStarted = true).catch(() => {});
             }
-        }
-
-        function updateProgress() {
-            progressSteps.forEach(step => {
-                const stepNumber = parseInt(step.dataset.step);
-                if (stepNumber <= currentStep) {
-                    step.classList.add('active');
-                } else {
-                    step.classList.remove('active');
-                }
-            });
         }
 
         function nextStep() {
@@ -641,10 +441,10 @@
             const inputs = currentCard.querySelectorAll('input:required, textarea:required, select:required');
             let allValid = true;
 
-            inputs.forEach((input) => {
+            inputs.forEach(input => {
                 if (!input.value.trim() || (input.tagName === 'SELECT' && input.value === '')) {
                     allValid = false;
-                    input.style.borderColor = 'red';
+                    input.style.borderColor = 'white';
                 } else {
                     input.style.borderColor = '';
                 }
@@ -654,20 +454,9 @@
                 currentCard.classList.remove('active');
                 currentStep++;
                 const nextCard = document.querySelector(`.card.step-${currentStep}`);
-                if (nextCard) {
-                    nextCard.classList.add('active');
-                    updateProgress();
-                } else {
-                    console.log("End of form steps. Ready for submission.");
-                }
+                if (nextCard) nextCard.classList.add('active');
             } else {
-                Swal.fire({
-                    title: 'Please Fill All Fields',
-                    text: 'Make sure to complete all required fields before proceeding.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
-                    customClass: { popup: 'swal2-popup', title: 'swal2-title', confirmButton: 'swal2-confirm' }
-                });
+                Swal.fire({ title: 'INCOMPLETE', text: 'All required fields must be filled.', icon: 'error' });
             }
         }
 
@@ -682,80 +471,48 @@
                 option: document.getElementById('option').value,
             };
 
+            Swal.fire({ title: 'UPLOADING...', didOpen: () => Swal.showLoading() });
+
             try {
                 const response = await fetch('/submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-
-                const result = await response.text();
                 if (response.ok) {
-                    Swal.fire({
-                        title: 'Success!',
-                        text: 'Your message has been successfully sent for review.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                        customClass: { popup: 'swal2-popup', title: 'swal2-title', confirmButton: 'swal2-confirm' }
-                    }).then(() => {
-                        form.reset();
-                        document.querySelector(`.card.step-${currentStep}`).classList.remove('active');
-                        currentStep = 1;
-                        document.querySelector(`.card.step-1`).classList.add('active');
-                        updateProgress();
-                    });
+                    Swal.fire({ title: 'ARCHIVED', text: 'Entry saved successfully.', icon: 'success' }).then(() => window.location.reload());
                 } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: result || 'Something went wrong. Please try again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        customClass: { popup: 'swal2-popup', title: 'swal2-title', confirmButton: 'swal2-confirm' }
-                    });
+                    Swal.fire({ title: 'FAILURE', text: 'Archive rejection.', icon: 'error' });
                 }
             } catch (error) {
-                Swal.fire({
-                    title: 'Network Error!',
-                    text: 'Could not connect to the server. Please check your internet connection.',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    customClass: { popup: 'swal2-popup', title: 'swal2-title', confirmButton: 'swal2-confirm' }
-                });
+                Swal.fire({ title: 'OFFLINE', text: 'Connection failed.', icon: 'error' });
             }
         });
 
         function typeWriter(elementId, text, speed) {
-            let i = 0;
-            let targetElement = document.getElementById(elementId);
-            targetElement.innerHTML = '';
+            let i = 0, target = document.getElementById(elementId);
             function type() {
                 if (i < text.length) {
-                    targetElement.innerHTML += text.charAt(i);
-                    i++;
+                    target.innerHTML += text.charAt(i); i++;
                     setTimeout(type, speed);
                 }
             }
             type();
         }
 
+        window.addEventListener('resize', resizeCanvas);
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
         });
 
-        window.addEventListener('DOMContentLoaded', function () {
-            const paragraphText = 'Spark Archives is your safe space to express freely and anonymously. Whether it\'s a confession, a suggestion, or just a thought — your voice matters here.';
-            typeWriter('typewriter-paragraph', paragraphText, 50);
-            updateProgress();
-            resizeCanvas();
-            init();
-            animate();
+        window.addEventListener('DOMContentLoaded', () => {
+            typeWriter('typewriter-paragraph', 'Secure. Anonymous. Immutable. Share your truth within the silent archives of the digital world.', 40);
+            resizeCanvas(); animate();
         });
 
-        document.addEventListener('click', playMusic);
+        document.addEventListener('mousedown', playMusic);
     </script>
 </body>
 </html>
